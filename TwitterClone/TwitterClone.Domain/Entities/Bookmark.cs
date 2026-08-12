@@ -6,10 +6,44 @@ namespace TwitterClone.Domain.Entities
 {
     internal class Bookmark
     {
-        public Guid _id { get; private set; }
-        public Guid _tweetId { get; private set; }
-        public Guid _userId { get; private set; }
+        private Guid _id;
+        private Guid _userId;
+        private Guid _tweetId;
+        private DateTime _createdAt;
+        private DateTime _modifiedAt;
 
-        public DateTime _createAt { get; private set; }
+        public Bookmark()
+        {
+            _id = Guid.NewGuid();
+            _createdAt = DateTime.UtcNow;
+        }
+
+        public Guid Id
+        {
+            get { return _id; }
+        }
+
+        public Guid UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        public Guid TweetId
+        {
+            get { return _tweetId; }
+            set { _tweetId = value; }
+        }
+
+        public DateTime CreatedAt
+        {
+            get { return _createdAt; }
+        }
+
+        public DateTime ModifiedAt
+        {
+            get { return _modifiedAt; }
+            set { _modifiedAt = value; }
+        }
     }
 }

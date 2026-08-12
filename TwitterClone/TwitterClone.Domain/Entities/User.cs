@@ -29,5 +29,35 @@ namespace TwitterClone.Domain.Entities
             get { return _firstName; }
             set { _firstName = value; }
         }
+
+        public string LastName
+        {
+            get { return _lastName; }
+            set { _lastName = value; }
+        }
+
+        public string Email
+        {
+            get { return _email; }
+            set { _email = value; }
+        }
+
+        public string Password
+        {
+            get { return _password; }
+            set { _password = value; }
+        }
+
+        public string Gender
+        {
+            get { return _gender; }
+            set { _gender = value; }
+        }
+
+        public string Phone
+        {
+            get { return _phone; }
+            set { _phone = value; }
+        }
     }
 }

@@ -6,8 +6,23 @@ namespace TwitterClone.Domain.Entities
 {
     internal class MessageContent
     {
-        public string _text { get; private set; }
-        public string imageUrl { get; private set; }
+        private string _text;
+        private string _imageUrl;
 
+        public MessageContent(string text, string imageUrl)
+        {
+            _text = text;
+            _imageUrl = imageUrl;
+        }
+
+        public string Text
+        {
+            get { return _text; }
+        }
+
+        public string ImageUrl
+        {
+            get { return _imageUrl; }
+        }
     }
 }

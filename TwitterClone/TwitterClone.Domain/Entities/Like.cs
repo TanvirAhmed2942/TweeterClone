@@ -6,10 +6,44 @@ namespace TwitterClone.Domain.Entities
 {
     internal class Like
     {
-        public Guid _id { get; private set; }
+        private Guid _id;
+        private Guid _userId;
+        private Guid _tweetId;
+        private DateTime _createdAt;
+        private DateTime _modifiedAt;
 
-        public Guid _tweetId { get; private set; }
+        public Like()
+        {
+            _id = Guid.NewGuid();
+            _createdAt = DateTime.UtcNow;
+        }
 
-        public DateTime _likedAt { get; private set; }
+        public Guid Id
+        {
+            get { return _id; }
+        }
+
+        public Guid UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        public Guid TweetId
+        {
+            get { return _tweetId; }
+            set { _tweetId = value; }
+        }
+
+        public DateTime CreatedAt
+        {
+            get { return _createdAt; }
+        }
+
+        public DateTime ModifiedAt
+        {
+            get { return _modifiedAt; }
+            set { _modifiedAt = value; }
+        }
     }
 }
