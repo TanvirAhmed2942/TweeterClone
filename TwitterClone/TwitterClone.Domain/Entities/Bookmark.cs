@@ -4,23 +4,15 @@ using System.Text;
 
 namespace TwitterClone.Domain.Entities
 {
-    internal class Bookmark
+    internal class Bookmark : BaseEntity
     {
-        private Guid _id;
-        private Guid _userId;
-        private Guid _tweetId;
-        private DateTime _createdAt;
-        private DateTime _modifiedAt;
+        public Guid _userId { get; private set; }
+        public Guid _tweetId { get; private set; }
 
-        public Bookmark()
+        public Bookmark(Guid userId, Guid tweetId) : base(Guid.NewGuid())
         {
-            _id = Guid.NewGuid();
-            _createdAt = DateTime.UtcNow;
-        }
-
-        public Guid Id
-        {
-            get { return _id; }
+            _userId = userId;
+            _tweetId = tweetId;
         }
 
         public Guid UserId
@@ -35,15 +27,10 @@ namespace TwitterClone.Domain.Entities
             set { _tweetId = value; }
         }
 
-        public DateTime CreatedAt
+        public override string DescribeRecord()
         {
-            get { return _createdAt; }
-        }
-
-        public DateTime ModifiedAt
-        {
-            get { return _modifiedAt; }
-            set { _modifiedAt = value; }
+            var baseRecord = base.DescribeRecord();
+            return $"{baseRecord}, User ID: {UserId}, Tweet ID: {TweetId}";
         }
     }
 }

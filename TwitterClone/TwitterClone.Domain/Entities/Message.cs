@@ -4,67 +4,28 @@ using System.Text;
 
 namespace TwitterClone.Domain.Entities
 {
-    internal class Message
+    internal class Message : BaseEntity
     {
-        private Guid _id;
-        private Guid _senderId;
-        private Guid _receiverId;
-        private MessageContent _content;
-        private DateTime _sentAt;
-        private bool _isRead;
-        private DateTime _createdAt;
-        private DateTime _modifiedAt;
+        public Guid SenderId { get; private set; }
+        public Guid ReceiverId { get; private set; }
+        public bool IsRead { get; private set; } = false;
+        public bool IsDeleted { get; private set; } = false;
 
-        public Message()
+        public MessageContent Content { get; private set; }
+        public Message(Guid senderId, Guid receiverId, MessageContent content) : base(Guid.NewGuid())
         {
-            _id = Guid.NewGuid();
-            _createdAt = DateTime.UtcNow;
+            SenderId = senderId;
+            ReceiverId = receiverId;
+            Content = content;
         }
 
-        public Guid Id
-        {
-            get { return _id; }
-        }
 
-        public Guid SenderId
+        public override string DescribeRecord()
         {
-            get { return _senderId; }
-            set { _senderId = value; }
-        }
-
-        public Guid ReceiverId
-        {
-            get { return _receiverId; }
-            set { _receiverId = value; }
-        }
-
-        public MessageContent Content
-        {
-            get { return _content; }
-            set { _content = value; }
-        }
-
-        public DateTime SentAt
-        {
-            get { return _sentAt; }
-            set { _sentAt = value; }
-        }
-
-        public bool IsRead
-        {
-            get { return _isRead; }
-            set { _isRead = value; }
-        }
-
-        public DateTime CreatedAt
-        {
-            get { return _createdAt; }
-        }
-
-        public DateTime ModifiedAt
-        {
-            get { return _modifiedAt; }
-            set { _modifiedAt = value; }
+            var baseRecord = base.DescribeRecord();
+            return $"{baseRecord}, Message ID: {Id}, Sender ID: {SenderId}, Receiver ID: {ReceiverId}, Content: {Content} , IsRead: {IsRead}, IsDeleted: {IsDeleted}";
         }
     }
+    
+    
 }

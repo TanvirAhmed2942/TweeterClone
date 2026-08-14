@@ -4,69 +4,46 @@ using System.Text;
 
 namespace TwitterClone.Domain.Entities
 {
-    internal class Notification
+    public class Notification: BaseEntity
     {
-        private Guid _id;
-        private Guid _userId;
-        private NotificationType _type;
-        private string _message;
-        private bool _isRead;
-        private DateTime _createdAt;
-        private DateTime _modifiedAt;
+       
+        public  Guid UserId { get; private set; }
+        public NotificationType Type { get; private set; }
+        public string Message { get; private set; }
+        public bool IsRead { get; private set; } = false;
 
-        public Notification()
+        public Notification(Guid userId, NotificationType type):base(Guid.NewGuid())
         {
-            _id = Guid.NewGuid();
-            _createdAt = DateTime.UtcNow;
+           
+            UserId = userId;
+            Type = type;
+            
         }
 
-        public Guid Id
+        protected void SetMessage(string message, bool isRead)
         {
-            get { return _id; }
+            Message = message;
+            IsRead = isRead;
         }
 
-        public Guid UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
+       
 
-        public NotificationType Type
+        public override string DescribeRecord()
         {
-            get { return _type; }
-            set { _type = value; }
-        }
-
-        public string Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
-
-        public bool IsRead
-        {
-            get { return _isRead; }
-            set { _isRead = value; }
-        }
-
-        public DateTime CreatedAt
-        {
-            get { return _createdAt; }
-        }
-
-        public DateTime ModifiedAt
-        {
-            get { return _modifiedAt; }
-            set { _modifiedAt = value; }
+            var baseRecord = base.DescribeRecord();
+            return $"{baseRecord}, UserId: {UserId}, Type: {Type}, Message: {Message}, IsRead: {IsRead}";
         }
 
     }
 
-    internal enum NotificationType
+    public enum NotificationType
     {
         Like,
+        Comment,
         Retweet,
         Follow,
-        Message
+        Message,
+        FriendRequest,
+        System
     }
 }
