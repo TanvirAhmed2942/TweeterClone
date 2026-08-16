@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TwitterClone.Domain.Entities
 {
-    public class Notification: BaseEntity
+    public abstract class Notification: BaseEntity
     {
        
         public  Guid UserId { get; private set; }
@@ -12,12 +12,9 @@ namespace TwitterClone.Domain.Entities
         public string Message { get; private set; }
         public bool IsRead { get; private set; } = false;
 
-        public Notification(Guid userId, NotificationType type):base(Guid.NewGuid())
+        public Notification(NotificationType type):base(Guid.NewGuid())
         {
-           
-            UserId = userId;
             Type = type;
-            
         }
 
         protected void SetMessage(string message, bool isRead)
@@ -26,7 +23,8 @@ namespace TwitterClone.Domain.Entities
             IsRead = isRead;
         }
 
-       
+
+        public abstract string GetMessage();
 
         public override string DescribeRecord()
         {
@@ -44,6 +42,7 @@ namespace TwitterClone.Domain.Entities
         Follow,
         Message,
         FriendRequest,
+        Mention,
         System
     }
 }
