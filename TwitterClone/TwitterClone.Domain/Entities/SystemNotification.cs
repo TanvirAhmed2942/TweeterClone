@@ -6,7 +6,7 @@ namespace TwitterClone.Domain.Entities
 {
     public sealed class SystemNotification : Notification
     {
-        public SystemNotification() : base(Guid.NewGuid(), NotificationType.System)
+        public SystemNotification() : base( NotificationType.System)
         {
 
         }
@@ -14,6 +14,11 @@ namespace TwitterClone.Domain.Entities
         public void AddMessage(string message)
         {
             SetMessage("New Version Available", false);
+        }
+
+        public override string GetMessage()
+        {
+            return $"A new version of the application is available.";
         }
 
         public override string DescribeRecord()
