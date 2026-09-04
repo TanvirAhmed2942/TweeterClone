@@ -68,7 +68,7 @@ namespace TwitterClone.Domain.Entities
         public override string DescribeRecord()
         {
             var baseRecord = base.DescribeRecord();
-            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Password: {Password}, Gender: {Gender}, Phone: {Phone}";
+            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Password: {Password}, Gender: {Gender}, Phone: {Phone}, Followers: {_followers.Count}, Notifications: {_notifications.Count}";
         }
 
         public void Follow(Guid userId)

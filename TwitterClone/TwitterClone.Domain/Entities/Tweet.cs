@@ -39,17 +39,23 @@ namespace TwitterClone.Domain.Entities
 
         public bool CanBeLiked(Guid userId)
         {
+           
             if (!_likes.Contains(userId))
             {
+                _likes.Add(userId);
                 return true;
             }
+            
             return false;
         }
+
+  
 
         public bool CanBeCommented(Guid userId, string comment)
         {
             if (!_comments.Contains(userId) && !string.IsNullOrWhiteSpace(comment))
             {
+                _comments.Add(userId);
                 return true;
             }
             return false;
@@ -59,6 +65,7 @@ namespace TwitterClone.Domain.Entities
         {
             if (!_shares.Contains(userId))
             {
+                _shares.Add(userId);
                 return true;
             }
             return false;
