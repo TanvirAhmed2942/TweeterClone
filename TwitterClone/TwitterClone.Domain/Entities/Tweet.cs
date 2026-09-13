@@ -4,10 +4,15 @@ using System.Text;
 
 namespace TwitterClone.Domain.Entities
 {
-    internal class Tweet : BaseEntity
+    public class Tweet : BaseEntity, ILikeable, IShareable, ICommentable
     {
-        public Guid _userId { get; private set; }
-        public string _content { get; private set; }
+        private Guid _userId { get;  set; }
+        private string _content { get;  set; }
+
+        private List<Guid> _likes = new List<Guid>();
+        private List<Guid> _shares = new List<Guid>();
+
+        private List<Guid> _comments = new List<Guid>();
 
         public Tweet(Guid userId, string content) : base(Guid.NewGuid())
         {
@@ -29,7 +34,41 @@ namespace TwitterClone.Domain.Entities
         public override string DescribeRecord()
         {
             var baseRecord = base.DescribeRecord();
-            return $"{baseRecord}, User ID: {UserId}, Content: {Content}";
+            return $"{baseRecord}, User ID: {UserId}, Content: {Content} , Likes: {_likes.Count}, Shares: {_shares.Count}, Comments: {_comments.Count}";
+        }
+
+        public bool CanBeLiked(Guid userId)
+        {
+           
+            if (!_likes.Contains(userId))
+            {
+                _likes.Add(userId);
+                return true;
+            }
+            
+            return false;
+        }
+
+  
+
+        public bool CanBeCommented(Guid userId, string comment)
+        {
+            if (!_comments.Contains(userId) && !string.IsNullOrWhiteSpace(comment))
+            {
+                _comments.Add(userId);
+                return true;
+            }
+            return false;
+        }
+
+        public bool CanBeShared(Guid userId)
+        {
+            if (!_shares.Contains(userId))
+            {
+                _shares.Add(userId);
+                return true;
+            }
+            return false;
         }
 
     }
