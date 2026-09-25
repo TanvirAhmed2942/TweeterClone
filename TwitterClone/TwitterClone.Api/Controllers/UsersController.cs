@@ -33,5 +33,63 @@ namespace TwitterClone.Api.Controllers
 
         }
 
+        [HttpGet("userId:{userId}")]
+        public IActionResult GetUserById([FromRoute] Guid userId)
+        {
+            var user = new
+            {
+                userId = userId,
+                userName = "Sample User"
+            };
+            return Ok(user);
+        }
+
+        [HttpPost]
+        public IActionResult PostUser([FromBody] string userName)
+        {
+            var user = new
+            {
+                userId = Guid.NewGuid(),
+                userName = userName
+            };
+            return Ok(user);
+        }
+
+
+        [HttpPut("userId:{userId}")]
+        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] string userName)
+        {
+            var user = new
+            {
+                userId = userId,
+                userName = userName
+            };
+            return Ok(user);
+        }
+
+        [HttpPatch("userId:{userId}/phoneNumber")]
+        public IActionResult PatchUser([FromRoute] Guid userId, [FromBody] string phoneNumber)
+        {
+            var user = new
+            {
+                userId = userId,
+                phoneNumber = phoneNumber
+            };
+            return Ok(user);
+        }
+
+        [HttpDelete("userId:{userId}")]
+        public IActionResult DeleteUser([FromRoute] Guid userId)
+        {
+            var user = new
+            {
+                userId = userId,
+                userName = "This user has been deleted."
+            };
+            return Ok(user);
+        }
+
+
+
     }
 }
