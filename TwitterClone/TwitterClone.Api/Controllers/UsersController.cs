@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Api.Data;
+using TwitterClone.Api.DTOs;
+using TwitterClone.Domain.Entities;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -7,28 +11,22 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet]
+        private readonly UserRepository _userRepository;
+        public UsersController(UserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
 
-        public IActionResult GetUser()
+        [HttpGet]
+        public IActionResult GetUsers()
         {
-            var users = new List<object>
-        {
-            new
+            var users = _userRepository.FetchAllUsers();
+
+            if (users.Count() == 0)
             {
-                userId = Guid.NewGuid(),
-                userName = "Tanvir Ahmed Swapnil"
-            },
-            new
-            {
-                userId = Guid.NewGuid(),
-                userName = "Ali Hayder Shuvo"
-            },
-            new
-            {
-                userId = Guid.NewGuid(),
-                userName = "Shomirul Hayder Shourav"
+                return NoContent();
             }
-        };
+
             return Ok(users);
 
         }
@@ -36,57 +34,131 @@ namespace TwitterClone.Api.Controllers
         [HttpGet("userId:{userId}")]
         public IActionResult GetUserById([FromRoute] Guid userId)
         {
-            var user = new
+            var userFound = _userRepository.FetchUserById(userId);
+
+            if (userFound == null)
             {
-                userId = userId,
-                userName = "Sample User"
-            };
-            return Ok(user);
+                return NotFound($"User not found: {userId}");
+            }
+
+            return Ok(userFound);
         }
 
         [HttpPost]
-        public IActionResult PostUser([FromBody] string userName)
+        public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
-            var user = new
+
+            if (createUserDto == null
+                || string.IsNullOrEmpty(createUserDto.FirstName)
+                || string.IsNullOrEmpty(createUserDto.LastName)
+                || string.IsNullOrEmpty(createUserDto.Email)
+                || string.IsNullOrEmpty(createUserDto.Password)
+                || string.IsNullOrEmpty(createUserDto.Gender)
+                || string.IsNullOrEmpty(createUserDto.Phone))
             {
-                userId = Guid.NewGuid(),
-                userName = userName
-            };
-            return Ok(user);
+                return BadRequest($"User data is required. {nameof(createUserDto)} cannot be null or empty.");
+            }
+
+            bool existingEmail = _userRepository.IsEmailExists(createUserDto.Email);
+
+            if (existingEmail)
+            {
+                return BadRequest($"{createUserDto.Email} already Exists");
+            }
+
+            var newUser = new User
+            (
+                createUserDto.FirstName,
+                createUserDto.LastName,
+                createUserDto.Email,
+                createUserDto.Password,
+                createUserDto.Gender,
+                createUserDto.Phone
+            );
+
+            var userCreated = _userRepository.AddUser(newUser);
+
+            return Ok(userCreated);
         }
 
 
         [HttpPut("userId:{userId}")]
-        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] string userName)
+        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto updateUserDto)
         {
-            var user = new
+            if (updateUserDto == null
+                || string.IsNullOrEmpty(updateUserDto.FirstName)
+                || string.IsNullOrEmpty(updateUserDto.LastName)
+                || string.IsNullOrEmpty(updateUserDto.Password)
+                || string.IsNullOrEmpty(updateUserDto.Gender)
+                || string.IsNullOrEmpty(updateUserDto.Phone))
             {
-                userId = userId,
-                userName = userName
-            };
-            return Ok(user);
+                return BadRequest($"User data is required. {nameof(updateUserDto)} cannot be null or empty.");
+            }
+
+
+            if (_userRepository.ModifyUser(
+                                                    userId,
+                                                    updateUserDto.FirstName!,
+                                                    updateUserDto.LastName!,
+                                                    updateUserDto.Password!,
+                                                    updateUserDto.Gender!,
+                                                    updateUserDto.Phone!
+                                                 ) == null)
+            {
+                return NotFound($"User not found: {userId}");
+            }
+
+            return Ok(_userRepository.ModifyUser(
+                                                    userId,
+                                                    updateUserDto.FirstName!,
+                                                    updateUserDto.LastName!,
+                                                    updateUserDto.Password!,
+                                                    updateUserDto.Gender!,
+                                                    updateUserDto.Phone!
+                                                 ));
         }
 
-        [HttpPatch("userId:{userId}/phoneNumber")]
-        public IActionResult PatchUser([FromRoute] Guid userId, [FromBody] string phoneNumber)
+        [HttpPatch("userId:{userId}")]
+
+        public IActionResult PatchUser(
+    [FromRoute] Guid userId,
+    [FromBody] PatchUpdateUserDto patchUpdateUserDto)
         {
-            var user = new
+            if (patchUpdateUserDto == null)
             {
-                userId = userId,
-                phoneNumber = phoneNumber
-            };
+                return BadRequest("Update data cannot be null.");
+            }
+
+            if (string.IsNullOrEmpty(patchUpdateUserDto.FirstName)
+                && string.IsNullOrEmpty(patchUpdateUserDto.LastName)
+                && string.IsNullOrEmpty(patchUpdateUserDto.Password)
+                && string.IsNullOrEmpty(patchUpdateUserDto.Gender)
+                && string.IsNullOrEmpty(patchUpdateUserDto.Phone))
+            {
+                return BadRequest("At least one field is required to update.");
+            }
+
+            var user = _userRepository.PatchUser(userId, patchUpdateUserDto);
+
+            if (user == null)
+            {
+                return NotFound($"User not found: {userId}");
+            }
+
             return Ok(user);
         }
 
         [HttpDelete("userId:{userId}")]
         public IActionResult DeleteUser([FromRoute] Guid userId)
         {
-            var user = new
+            var deletedUser = _userRepository.DeleteById(userId);
+
+            if (deletedUser == null)
             {
-                userId = userId,
-                userName = "This user has been deleted."
-            };
-            return Ok(user);
+                return NotFound($"User not found: {userId}");
+            }
+
+            return Ok($"User successfully deleted: {userId}");
         }
 
 
