@@ -78,3 +78,7 @@ obj/
 
 #Testing My
 Testing/
+
+#Confidential Jsons
+**/appsettings.json
+**/appsettings.Development.json
