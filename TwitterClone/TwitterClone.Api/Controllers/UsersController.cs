@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using TwitterClone.Api.Data;
-using TwitterClone.Api.DTOs;
-using TwitterClone.Domain.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
+
 
 namespace TwitterClone.Api.Controllers
 {
@@ -11,30 +9,24 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        public UsersController(UserRepository userRepository)
+        private readonly IUserService _userService;
+        public UsersController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpGet]
         public IActionResult GetUsers()
         {
-            var users = _userRepository.FetchAllUsers();
-
-            if (users.Count() == 0)
-            {
-                return NoContent();
-            }
+            var users = _userService.GetUsers();
 
             return Ok(users);
-
         }
 
         [HttpGet("userId:{userId}")]
         public IActionResult GetUserById([FromRoute] Guid userId)
         {
-            var userFound = _userRepository.FetchUserById(userId);
+            var userFound = _userService.GetUserById(userId);
 
             if (userFound == null)
             {
@@ -48,35 +40,11 @@ namespace TwitterClone.Api.Controllers
         public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
 
-            if (createUserDto == null
-                || string.IsNullOrEmpty(createUserDto.FirstName)
-                || string.IsNullOrEmpty(createUserDto.LastName)
-                || string.IsNullOrEmpty(createUserDto.Email)
-                || string.IsNullOrEmpty(createUserDto.Password)
-                || string.IsNullOrEmpty(createUserDto.Gender)
-                || string.IsNullOrEmpty(createUserDto.Phone))
+            var userCreated = _userService.CreateUser(createUserDto);
+            if (userCreated == null)
             {
-                return BadRequest($"User data is required. {nameof(createUserDto)} cannot be null or empty.");
+                return BadRequest("User creation failed. Please check the provided data.");
             }
-
-            bool existingEmail = _userRepository.IsEmailExists(createUserDto.Email);
-
-            if (existingEmail)
-            {
-                return BadRequest($"{createUserDto.Email} already Exists");
-            }
-
-            var newUser = new User
-            (
-                createUserDto.FirstName,
-                createUserDto.LastName,
-                createUserDto.Email,
-                createUserDto.Password,
-                createUserDto.Gender,
-                createUserDto.Phone
-            );
-
-            var userCreated = _userRepository.AddUser(newUser);
 
             return Ok(userCreated);
         }
@@ -85,60 +53,22 @@ namespace TwitterClone.Api.Controllers
         [HttpPut("userId:{userId}")]
         public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto updateUserDto)
         {
-            if (updateUserDto == null
-                || string.IsNullOrEmpty(updateUserDto.FirstName)
-                || string.IsNullOrEmpty(updateUserDto.LastName)
-                || string.IsNullOrEmpty(updateUserDto.Password)
-                || string.IsNullOrEmpty(updateUserDto.Gender)
-                || string.IsNullOrEmpty(updateUserDto.Phone))
+            var updatedUser = _userService.UpdateUser(userId, updateUserDto);
+            if (updatedUser == null)
             {
-                return BadRequest($"User data is required. {nameof(updateUserDto)} cannot be null or empty.");
+                return BadRequest("User update failed. Please check the provided data.");
             }
-
-
-            if (_userRepository.ModifyUser(
-                                                    userId,
-                                                    updateUserDto.FirstName!,
-                                                    updateUserDto.LastName!,
-                                                    updateUserDto.Password!,
-                                                    updateUserDto.Gender!,
-                                                    updateUserDto.Phone!
-                                                 ) == null)
-            {
-                return NotFound($"User not found: {userId}");
-            }
-
-            return Ok(_userRepository.ModifyUser(
-                                                    userId,
-                                                    updateUserDto.FirstName!,
-                                                    updateUserDto.LastName!,
-                                                    updateUserDto.Password!,
-                                                    updateUserDto.Gender!,
-                                                    updateUserDto.Phone!
-                                                 ));
+            return Ok(updatedUser);
         }
 
         [HttpPatch("userId:{userId}")]
 
         public IActionResult PatchUser(
-    [FromRoute] Guid userId,
-    [FromBody] PatchUpdateUserDto patchUpdateUserDto)
+            [FromRoute] Guid userId,
+            [FromBody] PatchUpdateUserDto patchUpdateUserDto)
         {
-            if (patchUpdateUserDto == null)
-            {
-                return BadRequest("Update data cannot be null.");
-            }
 
-            if (string.IsNullOrEmpty(patchUpdateUserDto.FirstName)
-                && string.IsNullOrEmpty(patchUpdateUserDto.LastName)
-                && string.IsNullOrEmpty(patchUpdateUserDto.Password)
-                && string.IsNullOrEmpty(patchUpdateUserDto.Gender)
-                && string.IsNullOrEmpty(patchUpdateUserDto.Phone))
-            {
-                return BadRequest("At least one field is required to update.");
-            }
-
-            var user = _userRepository.PatchUser(userId, patchUpdateUserDto);
+            var user = _userService.PatchUser(userId, patchUpdateUserDto);
 
             if (user == null)
             {
@@ -151,9 +81,9 @@ namespace TwitterClone.Api.Controllers
         [HttpDelete("userId:{userId}")]
         public IActionResult DeleteUser([FromRoute] Guid userId)
         {
-            var deletedUser = _userRepository.DeleteById(userId);
+            var deletedUser = _userService.DeleteUser(userId);
 
-            if (deletedUser == null)
+            if (!deletedUser)
             {
                 return NotFound($"User not found: {userId}");
             }

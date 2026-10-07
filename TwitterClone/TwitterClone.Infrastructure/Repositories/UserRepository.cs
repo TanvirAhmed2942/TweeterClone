@@ -1,21 +1,32 @@
-﻿using TwitterClone.Api.DTOs;
+﻿using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
 using TwitterClone.Domain.Entities;
 
-namespace TwitterClone.Api.Data
+namespace TwitterClone.Infrastructure.Data
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
-        private List<User> _users = new List<User>();
+        private List<User>? _users = new List<User>();
 
-        public User AddUser(User user)
+        public User CreateUser(CreateUserDto user)
         {
-            _users.Add(user);
-            return user;
+            var newUser = new User
+            (
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.Password,
+                user.Gender,
+                user.Phone
+            );
+            _users.Add(newUser);
+            Console.WriteLine($"Users count after create: {_users.Count}");
+            return newUser;
         }
 
-        public IEnumerable<User> FetchAllUsers()
+        public List<User>? FetchAllUsers()
         {
-            return _users;
+            return _users.ToList();
         }
 
         public User? FetchUserById(Guid userId)
@@ -36,11 +47,7 @@ namespace TwitterClone.Api.Data
 
         public User? ModifyUser(
                                 Guid userId,
-                                string firstName,
-                                string lastName,
-                                string password,
-                                string gender,
-                                string phone)
+                                UpdateUserDto dto)
         {
             var existingUser = _users.SingleOrDefault(u => u.Id == userId);
 
@@ -48,11 +55,11 @@ namespace TwitterClone.Api.Data
                 return null;
 
             existingUser.Update(
-                                 firstName,
-                                 lastName,
-                                 password,
-                                 gender,
-                                 phone
+                                 dto.FirstName,
+                                 dto.LastName,
+                                 dto.Password,
+                                 dto.Gender,
+                                 dto.Phone
                                );
 
             return existingUser;
@@ -82,7 +89,7 @@ namespace TwitterClone.Api.Data
 
             return existingUser;
         }
-        
+
 
         public User? DeleteById(Guid userId)
         {

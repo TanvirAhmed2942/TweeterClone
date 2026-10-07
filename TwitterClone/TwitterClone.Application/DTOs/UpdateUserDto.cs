@@ -1,4 +1,4 @@
-﻿namespace TwitterClone.Api.DTOs
+﻿namespace TwitterClone.Application.DTOs
 {
     public class UpdateUserDto
     {

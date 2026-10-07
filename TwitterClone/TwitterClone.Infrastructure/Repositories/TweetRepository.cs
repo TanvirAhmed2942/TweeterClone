@@ -1,8 +1,9 @@
-﻿using TwitterClone.Domain.Entities;
+﻿using TwitterClone.Application.Interfaces;
+using TwitterClone.Domain.Entities;
 
-namespace TwitterClone.Api.Data
+namespace TwitterClone.Infrastructure.Data
 {
-    public class TweetRepository
+    public class TweetRepository : ITweetRepository
     {
         private List<Tweet> _tweets = new List<Tweet>();
 
@@ -12,7 +13,7 @@ namespace TwitterClone.Api.Data
             return tweet;
         }
 
-        public IEnumerable<Tweet> GetAllTweets()
+        public List<Tweet> GetAllTweets()
         {
             return _tweets;
         }
@@ -28,19 +29,19 @@ namespace TwitterClone.Api.Data
             .Where(t => t.UserId == userId)
             .ToList();
         }
-        
+
 
         public bool IsFoundById(Guid tweetId)
         {
             return _tweets.Any(t => t.Id == tweetId);
         }
 
-        public Tweet ModifyContent(Guid tweetId,string content)
+        public Tweet ModifyContent(Guid tweetId, string content)
         {
             var tweet = _tweets.SingleOrDefault(t => t.Id == tweetId);
 
             tweet.Content = content;
-            
+
 
             return tweet;
         }
