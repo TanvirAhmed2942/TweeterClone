@@ -12,7 +12,7 @@ namespace TwitterClone.Application.Services
             _tweetRepository = tweetRepository;
         }
 
-        public Tweet AddTweet(CreateTweetDto createTweetDto)
+        public Tweet? AddTweet(CreateTweetDto createTweetDto)
         {
             if (createTweetDto == null || string.IsNullOrWhiteSpace(createTweetDto.Content))
             {
@@ -68,7 +68,7 @@ namespace TwitterClone.Application.Services
 
         }
 
-        public bool IsFoundById(Guid tweetId)
+        public bool? IsFoundById(Guid tweetId)
         {
 
             bool found = _tweetRepository.IsFoundById(tweetId);
@@ -80,7 +80,7 @@ namespace TwitterClone.Application.Services
             return true;
         }
 
-        public Tweet ModifyContent(Guid tweetId, string content)
+        public Tweet? ModifyContent(Guid tweetId, string content)
         {
             var tweet = _tweetRepository.ModifyContent(tweetId, content);
             if (tweet == null)

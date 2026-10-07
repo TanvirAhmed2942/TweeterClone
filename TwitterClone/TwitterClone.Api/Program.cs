@@ -1,6 +1,7 @@
 using TwitterClone.Application.Interfaces;
 using TwitterClone.Application.Services;
-using TwitterClone.Infrastructure.Data;
+
+using TwitterClone.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);

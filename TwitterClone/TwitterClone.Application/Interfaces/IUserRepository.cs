@@ -6,17 +6,17 @@ namespace TwitterClone.Application.Interfaces
     public interface IUserRepository
     {
         User CreateUser(CreateUserDto user);
-        List<User>? FetchAllUsers();
+        List<User> FetchAllUsers();
         User? FetchUserById(Guid userId);
 
         bool IsFoundById(Guid userId);
 
         bool IsEmailExists(string email);
 
-        User? ModifyUser(Guid userId, UpdateUserDto dto);
+        User? ModifyUser(Guid userId, UpdateUserDto updateUserDto);
 
         User? PatchUser(Guid userId, PatchUpdateUserDto dto);
 
-        User? DeleteById(Guid userId);
+        bool DeleteById(Guid userId);
     }
 }

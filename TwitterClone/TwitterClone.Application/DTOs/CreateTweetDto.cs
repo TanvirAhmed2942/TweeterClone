@@ -1,9 +1,13 @@
-﻿namespace TwitterClone.Application.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TwitterClone.Application.DTOs
 {
     public class CreateTweetDto
     {
         public Guid UserId { get; set; }
-        public string Content { get; set; }
+
+        [Required(ErrorMessage = "Content is required.")]
+        public string Content { get; set; } = "";
 
     }
 }

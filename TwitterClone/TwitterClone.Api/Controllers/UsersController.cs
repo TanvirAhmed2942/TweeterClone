@@ -19,7 +19,10 @@ namespace TwitterClone.Api.Controllers
         public IActionResult GetUsers()
         {
             var users = _userService.GetUsers();
-
+            if (users.Count == 0)
+            {
+                return NotFound("No users found.");
+            }
             return Ok(users);
         }
 

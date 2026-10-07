@@ -47,6 +47,7 @@ namespace TwitterClone.Application.Services
             {
                 return null;
             }
+
             return new ResponseUserDto
             {
                 Id = userCreated.Id,
@@ -63,7 +64,7 @@ namespace TwitterClone.Application.Services
         public bool DeleteUser(Guid userId)
         {
             var deletedUser = _userRepository.DeleteById(userId);
-            if (deletedUser == null)
+            if (!deletedUser)
             {
                 return false;
             }
@@ -90,24 +91,24 @@ namespace TwitterClone.Application.Services
 
         }
 
-        public List<ResponseUserDto>? GetUsers()
+        public List<ResponseUserDto> GetUsers()
         {
             var users = _userRepository.FetchAllUsers();
             if (users == null || users.Count == 0)
             {
-                return null;
+                return [];
             }
-            return users.Select(u => new ResponseUserDto
+            return [.. users.Select(u => new ResponseUserDto
             {
                 Id = u.Id,
                 Name = u.FirstName + " " + u.LastName,
                 Email = u.Email,
                 Gender = u.Gender,
                 Phone = u.Phone
-            }).ToList();
+            })];
         }
 
-        public ResponseUserDto PatchUser(Guid userId, PatchUpdateUserDto patchUpdateUserDto)
+        public ResponseUserDto? PatchUser(Guid userId, PatchUpdateUserDto patchUpdateUserDto)
         {
             if (patchUpdateUserDto == null)
             {
@@ -127,15 +128,15 @@ namespace TwitterClone.Application.Services
 
             return new ResponseUserDto
             {
-                Id = patchedUser.Id,
-                Name = patchedUser.FirstName + " " + patchedUser.LastName,
-                Email = patchedUser.Email,
-                Gender = patchedUser.Gender,
-                Phone = patchedUser.Phone
+                Id = patchedUser?.Id,
+                Name = patchedUser?.FirstName + " " + patchedUser?.LastName,
+                Email = patchedUser?.Email,
+                Gender = patchedUser?.Gender,
+                Phone = patchedUser?.Phone
             };
         }
 
-        public ResponseUserDto UpdateUser(Guid userId, UpdateUserDto updateUserDto)
+        public ResponseUserDto? UpdateUser(Guid userId, UpdateUserDto updateUserDto)
         {
             if (updateUserDto == null
                || string.IsNullOrEmpty(updateUserDto.FirstName)
@@ -151,11 +152,11 @@ namespace TwitterClone.Application.Services
             var updatedUser = _userRepository.ModifyUser(userId, updateUserDto);
             return new ResponseUserDto
             {
-                Id = updatedUser.Id,
-                Name = updatedUser.FirstName + " " + updatedUser.LastName,
-                Email = updatedUser.Email,
-                Gender = updatedUser.Gender,
-                Phone = updatedUser.Phone
+                Id = updatedUser?.Id,
+                Name = updatedUser?.FirstName + " " + updatedUser?.LastName,
+                Email = updatedUser?.Email,
+                Gender = updatedUser?.Gender,
+                Phone = updatedUser?.Phone
             };
         }
     }
