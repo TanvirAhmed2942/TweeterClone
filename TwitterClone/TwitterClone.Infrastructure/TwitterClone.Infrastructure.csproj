@@ -7,4 +7,9 @@
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TwitterClone.Application\TwitterClone.Application.csproj" />
+    <ProjectReference Include="..\TwitterClone.Domain\TwitterClone.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

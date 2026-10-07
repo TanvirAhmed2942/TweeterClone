@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
-    public abstract class Notification: BaseEntity
+    public abstract class Notification : BaseEntity
     {
-       
-        public  Guid UserId { get; private set; }
-        public NotificationType Type { get; private set; }
-        public string Message { get; private set; }
+
+        public Guid UserId { get; private set; }
+        public NotificationType Type { get; private set; } = NotificationType.Like;
+        public string Message { get; private set; } = "";
         public bool IsRead { get; private set; } = false;
 
-        public Notification(NotificationType type):base(Guid.NewGuid())
+
+        public Notification(NotificationType type) : base(Guid.NewGuid())
         {
             Type = type;
         }

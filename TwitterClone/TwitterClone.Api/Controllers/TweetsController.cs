@@ -1,6 +1,6 @@
-﻿
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -8,72 +8,119 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class TweetsController : ControllerBase
     {
+        private readonly ITweetService _tweetService;
 
-        private readonly IConfiguration _configuration;
-        private readonly HttpClient _httpClient;
-
-
-        public TweetsController(IConfiguration configuration,HttpClient httpClient)
+        public TweetsController(ITweetService tweetService)
         {
-            _configuration = configuration;
-            _httpClient = httpClient;
+            _tweetService = tweetService;
         }
+
+
 
         [HttpGet]
         public IActionResult GetTweets()
         {
-            var maxLength = _configuration.GetValue<string>("TwitterSettings:MaxTweetLength");
-            string appName = _configuration.GetValue<string>("App:AppName");
-            return Ok($"Max Tweet Lenght: {maxLength} \nApp Name: {appName}");
+
+
+            var allTweets = _tweetService.GetAllTweets();
+
+            if (allTweets == null)
+            {
+                return NotFound("No tweets found.");
+            }
+
+            return Ok(allTweets);
         }
 
         [HttpGet("tweetId:{tweetId}")]
-        public IActionResult GetTweet([FromRoute] Guid tweetId)
+        public IActionResult GetTweetById([FromRoute] Guid tweetId)
         {
-            var tweet = new { TweetId = tweetId, Content = "This is a sample tweet." };
+            var tweet = _tweetService.FetchTweetById(tweetId);
+            if (tweet == null)
+            {
+                return NotFound("Tweet not found.");
+            }
             return Ok(tweet);
         }
 
         [HttpGet("userId:{userId}")]
         public IActionResult GetTweetsByUserId([FromRoute] Guid userId)
         {
-            var tweets = new[]
+            var tweetByUser = _tweetService.FetchTweetsByUserId(userId);
+            if (tweetByUser == null)
             {
-                new { TweetId = Guid.NewGuid(), Content = "This is a tweet." },
-                new { TweetId = Guid.NewGuid(), Content = "Another tweet here." },
-                new { TweetId = Guid.NewGuid(), Content = "Yet another tweet." }
-            };
-            return Ok(tweets);
+                return NotFound($"Tweets not found for this user: {userId}");
+            }
+            return Ok(tweetByUser);
         }
 
         [HttpPost]
-        public IActionResult PostTweet([FromBody] string content)
+        public IActionResult PostTweet([FromBody] CreateTweetDto createTweetDto)
         {
-            var tweet = new { TweetId = Guid.NewGuid(), Content = content };
-            return Ok(tweet);
+            var addedTweet = _tweetService.AddTweet(createTweetDto);
+            if (addedTweet == null)
+            {
+                return BadRequest("Failed to add tweet.");
+            }
+            return Ok(addedTweet);
         }
 
         [HttpPut("tweetId:{tweetId}")]
-        public IActionResult UpdateTweet([FromRoute] Guid tweetId, [FromBody] string content)
+        public IActionResult UpdateTweet([FromRoute] Guid tweetId, [FromBody] UpdateTweetDto updateDto)
         {
-            var tweet = new { TweetId = tweetId, Content = content };
-            return Ok(tweet);
+
+            var modifiedTweet = _tweetService.ModifyContent(tweetId, updateDto.Content);
+            if (modifiedTweet == null)
+            {
+                return NotFound("Tweet not found.");
+            }
+
+            return Ok(modifiedTweet);
         }
 
-        [HttpPatch("tweetId:{tweetId}")]
-        public IActionResult PatchTweet([FromRoute] Guid tweetId, [FromBody] string content)
-        {
-            var tweet = new { TweetId = tweetId, Content = content };
-            return Ok(tweet);
-        }
+        //[HttpPatch("tweetId:{tweetId}")]
+        //public IActionResult PatchTweet([FromRoute] Guid tweetId, [FromBody] string content)
+        //{
+        //    var tweet = new { TweetId = tweetId, Content = content };
+        //    return Ok(tweet);
+        //}
 
         [HttpDelete("tweetId:{tweetId}")]
         public IActionResult DeleteTweet([FromRoute] Guid tweetId)
         {
-            var tweet = new { TweetId = tweetId, Content = "This tweet has been deleted." };
-            return Ok(tweet);
+            var deletedTweet = _tweetService.DeleteById(tweetId);
+
+            if (deletedTweet == null)
+            {
+                return NotFound();
+            }
+            return Ok(deletedTweet);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+        //private readonly IConfiguration _configuration;
+        //private readonly HttpClient _httpClient;
+
+
+        //public TweetsController(IConfiguration configuration,HttpClient httpClient)
+        //{
+        //    _configuration = configuration;
+        //    _httpClient = httpClient;
+        //}
+
+        //var maxLength = _configuration.GetValue<string>("TwitterSettings:MaxTweetLength");
+        //string appName = _configuration.GetValue<string>("App:AppName");
+        //return Ok($"Max Tweet Lenght: {maxLength} \nApp Name: {appName}");
 
         //[HttpGet]
         //public async Task<IActionResult> GetAge()

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
+
 
 namespace TwitterClone.Api.Controllers
 {
@@ -7,86 +9,89 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         [HttpGet]
-
-        public IActionResult GetUser()
+        public IActionResult GetUsers()
         {
-            var users = new List<object>
-        {
-            new
+            var users = _userService.GetUsers();
+            if (users.Count == 0)
             {
-                userId = Guid.NewGuid(),
-                userName = "Tanvir Ahmed Swapnil"
-            },
-            new
-            {
-                userId = Guid.NewGuid(),
-                userName = "Ali Hayder Shuvo"
-            },
-            new
-            {
-                userId = Guid.NewGuid(),
-                userName = "Shomirul Hayder Shourav"
+                return NotFound("No users found.");
             }
-        };
             return Ok(users);
-
         }
 
         [HttpGet("userId:{userId}")]
         public IActionResult GetUserById([FromRoute] Guid userId)
         {
-            var user = new
+            var userFound = _userService.GetUserById(userId);
+
+            if (userFound == null)
             {
-                userId = userId,
-                userName = "Sample User"
-            };
-            return Ok(user);
+                return NotFound($"User not found: {userId}");
+            }
+
+            return Ok(userFound);
         }
 
         [HttpPost]
-        public IActionResult PostUser([FromBody] string userName)
+        public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
-            var user = new
+
+            var userCreated = _userService.CreateUser(createUserDto);
+            if (userCreated == null)
             {
-                userId = Guid.NewGuid(),
-                userName = userName
-            };
-            return Ok(user);
+                return BadRequest("User creation failed. Please check the provided data.");
+            }
+
+            return Ok(userCreated);
         }
 
 
         [HttpPut("userId:{userId}")]
-        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] string userName)
+        public IActionResult UpdateUser([FromRoute] Guid userId, [FromBody] UpdateUserDto updateUserDto)
         {
-            var user = new
+            var updatedUser = _userService.UpdateUser(userId, updateUserDto);
+            if (updatedUser == null)
             {
-                userId = userId,
-                userName = userName
-            };
-            return Ok(user);
+                return BadRequest("User update failed. Please check the provided data.");
+            }
+            return Ok(updatedUser);
         }
 
-        [HttpPatch("userId:{userId}/phoneNumber")]
-        public IActionResult PatchUser([FromRoute] Guid userId, [FromBody] string phoneNumber)
+        [HttpPatch("userId:{userId}")]
+
+        public IActionResult PatchUser(
+            [FromRoute] Guid userId,
+            [FromBody] PatchUpdateUserDto patchUpdateUserDto)
         {
-            var user = new
+
+            var user = _userService.PatchUser(userId, patchUpdateUserDto);
+
+            if (user == null)
             {
-                userId = userId,
-                phoneNumber = phoneNumber
-            };
+                return NotFound($"User not found: {userId}");
+            }
+
             return Ok(user);
         }
 
         [HttpDelete("userId:{userId}")]
         public IActionResult DeleteUser([FromRoute] Guid userId)
         {
-            var user = new
+            var deletedUser = _userService.DeleteUser(userId);
+
+            if (!deletedUser)
             {
-                userId = userId,
-                userName = "This user has been deleted."
-            };
-            return Ok(user);
+                return NotFound($"User not found: {userId}");
+            }
+
+            return Ok($"User successfully deleted: {userId}");
         }
 
 
