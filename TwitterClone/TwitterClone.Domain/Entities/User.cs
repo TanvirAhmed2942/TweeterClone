@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
     public class User : BaseEntity, IFollowable, INotifiable
     {
-        
+
         public string _firstName { get; private set; }
         public string _lastName { get; private set; }
         public string _email { get; private set; }
@@ -65,6 +61,19 @@ namespace TwitterClone.Domain.Entities
             set { _phone = value; }
         }
 
+        public void Update(
+            string firstName,
+            string lastName,
+            string password,
+            string gender,
+            string phone)
+        {
+            _firstName = firstName;
+            _lastName = lastName;
+            _password = password;
+            _gender = gender;
+            _phone = phone;
+        }
         public override string DescribeRecord()
         {
             var baseRecord = base.DescribeRecord();

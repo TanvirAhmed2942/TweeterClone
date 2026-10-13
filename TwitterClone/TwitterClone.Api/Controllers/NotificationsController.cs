@@ -6,7 +6,7 @@ namespace TwitterClone.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class NotificationsController : ControllerBase
     {
         [HttpGet]
