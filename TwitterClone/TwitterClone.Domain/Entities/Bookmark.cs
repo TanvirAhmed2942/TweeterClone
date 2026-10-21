@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
-    internal class Bookmark : BaseEntity
+    public class Bookmark : BaseEntity
     {
         public Guid _userId { get; private set; }
         public Guid _tweetId { get; private set; }

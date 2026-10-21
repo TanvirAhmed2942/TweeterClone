@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
     public class Tweet : BaseEntity, ILikeable, IShareable, ICommentable
     {
-        private Guid _userId { get;  set; }
-        private string _content { get;  set; }
+        private Guid _userId { get; set; }
+        private string _content { get; set; }
 
         private List<Guid> _likes = new List<Guid>();
         private List<Guid> _shares = new List<Guid>();
@@ -37,19 +33,16 @@ namespace TwitterClone.Domain.Entities
             return $"{baseRecord}, User ID: {UserId}, Content: {Content} , Likes: {_likes.Count}, Shares: {_shares.Count}, Comments: {_comments.Count}";
         }
 
-        public bool CanBeLiked(Guid userId)
+        public bool CanBeLiked()
         {
-           
-            if (!_likes.Contains(userId))
+            if (string.IsNullOrWhiteSpace(Content))
             {
-                _likes.Add(userId);
-                return true;
+                return false;
             }
-            
-            return false;
+            return true;
         }
 
-  
+
 
         public bool CanBeCommented(Guid userId, string comment)
         {

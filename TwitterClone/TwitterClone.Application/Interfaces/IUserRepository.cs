@@ -9,7 +9,7 @@ namespace TwitterClone.Application.Interfaces
         List<User> FetchAllUsers();
         User? FetchUserById(Guid userId);
 
-        bool IsFoundById(Guid userId);
+        User? IsFoundById(Guid userId);
 
         bool IsEmailExists(string email);
 
