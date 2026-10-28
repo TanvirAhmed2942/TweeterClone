@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
     public class BaseEntity
     {
@@ -17,6 +13,12 @@ namespace TwitterClone.Domain.Entities
             Id = id;
             CreatedAt = DateTime.UtcNow;
         }
+
+        public void MarkAsModified()
+        {
+            ModifiedAt = DateTime.UtcNow;
+        }
+
 
         public virtual string DescribeRecord()
         {

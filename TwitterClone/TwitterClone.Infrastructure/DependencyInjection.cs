@@ -14,11 +14,11 @@ namespace TwitterClone.Infrastructure
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<ITweetRepository, TweetRepository>();
             services.AddSingleton<IBookmarkRepository, BookmarkRepository>();
-            //services.AddSingleton<IFollowRepository, FollowRepository>();
+            services.AddSingleton<IFollowRepository, FollowRepository>();
             services.AddSingleton<ILikeRepository, LikeRepository>();
-            //services.AddSingleton<IMessageRepository, MessageRepository>();
-            //services.AddSingleton<INotificationRepository, NotificationRepository>();
-            //services.AddSingleton<IRetweetRepository, RetweetRepository>();
+            services.AddSingleton<IMessageRepository, MessageRepository>();
+            services.AddSingleton<INotificationRepository, NotificationRepository>();
+            services.AddSingleton<IRetweetRepository, RetweetRepository>();
 
             return services;
         }

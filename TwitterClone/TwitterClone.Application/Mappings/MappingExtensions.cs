@@ -69,45 +69,45 @@ namespace TwitterClone.Application.Mappings
             };
         }
 
-        //public static RetweetDto ToDto(this Retweet retweet)
-        //{
-        //    return new RetweetDto
-        //    {
-        //        Id = retweet.Id,
-        //        UserId = retweet.UserId,
-        //        TweetId = retweet.TweetId,
-        //        Comment = retweet.Comment,
-        //        CreatedAt = retweet.CreatedAt,
-        //        ModifiedAt = retweet.ModifiedAt
-        //    };
-        //}
+        public static RetweetDto ToDto(this Retweet retweet)
+        {
+            return new RetweetDto
+            {
+                Id = retweet.Id,
+                UserId = retweet.UserId,
+                TweetId = retweet.TweetId,
+                Comment = retweet.Comment,
+                CreatedAt = retweet.CreatedAt,
+                ModifiedAt = retweet.ModifiedAt
+            };
+        }
 
-        //public static MessageDto ToDto(this Message message)
-        //{
-        //    return new MessageDto
-        //    {
-        //        Id = message.Id,
-        //        SenderId = message.SenderId,
-        //        ReceiverId = message.ReceiverId,
-        //        Content = message.Content,
-        //        SentAt = message.SentAt,
-        //        IsRead = message.IsRead,
-        //        ModifiedAt = message.ModifiedAt
-        //    };
-        //}
+        public static MessageDto ToDto(this Message message)
+        {
+            return new MessageDto
+            {
+                Id = message.Id,
+                SenderId = message.SenderId,
+                ReceiverId = message.ReceiverId,
+                Content = message.Content,
+                SentAt = message.SentAt,
+                IsRead = message.IsRead,
+                ModifiedAt = message.ModifiedAt
+            };
+        }
 
-        //public static NotificationDto ToDto(this Notification notification)
-        //{
-        //    return new NotificationDto
-        //    {
-        //        Id = notification.Id,
-        //        UserId = notification.UserId,
-        //        Type = notification.Type,
-        //        Message = notification.GetMessage(),
-        //        IsRead = notification.IsRead,
-        //        CreatedAt = notification.CreatedAt,
-        //        ModifiedAt = notification.ModifiedAt
-        //    };
-        //}
+        public static NotificationDto ToDto(this Notification notification)
+        {
+            return new NotificationDto
+            {
+                Id = notification.Id,
+                UserId = notification.UserId,
+                Type = notification.Type,
+                Message = notification.GetMessage(),
+                IsRead = notification.IsRead,
+                CreatedAt = notification.CreatedAt,
+                ModifiedAt = notification.ModifiedAt
+            };
+        }
     }
 }

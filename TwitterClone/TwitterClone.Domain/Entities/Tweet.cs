@@ -2,6 +2,7 @@
 {
     public class Tweet : BaseEntity, ILikeable, IShareable, ICommentable
     {
+        public const int MaxContentLength = 280;
         private Guid _userId { get; set; }
         private string _content { get; set; }
 
@@ -9,6 +10,8 @@
         private List<Guid> _shares = new List<Guid>();
 
         private List<Guid> _comments = new List<Guid>();
+
+
 
         public Tweet(Guid userId, string content) : base(Guid.NewGuid())
         {
@@ -26,6 +29,8 @@
             get { return _content; }
             set { _content = value; }
         }
+
+
 
         public override string DescribeRecord()
         {

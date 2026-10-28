@@ -3,10 +3,10 @@
     public abstract class Notification : BaseEntity
     {
 
-        public Guid UserId { get; private set; }
+        public Guid UserId { get; set; }
         public NotificationType Type { get; private set; } = NotificationType.Like;
         public string Message { get; private set; } = "";
-        public bool IsRead { get; private set; } = false;
+        public bool IsRead { get; set; } = false;
 
 
         public Notification(NotificationType type) : base(Guid.NewGuid())

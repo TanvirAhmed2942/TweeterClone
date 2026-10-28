@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
+using TwitterClone.Domain.Entities;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -9,87 +10,99 @@ namespace TwitterClone.Api.Controllers
     //[Authorize]
     public class NotificationsController : ControllerBase
     {
+        private readonly INotificationService _notificationService;
+
+        public NotificationsController(
+            INotificationService notificationService)
+        {
+            _notificationService = notificationService;
+        }
         [HttpGet]
-        public IActionResult GetNotifications()
+        [ProducesResponseType(typeof(List<NotificationDto>), StatusCodes.Status200OK)]
+        public IActionResult GetNotifications([FromQuery] Guid? userId, [FromQuery] NotificationType? type, [FromQuery] bool? isRead)
         {
-            var notifications = new List<object>
-            {
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "You have a new follower!"
-                },
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "Your tweet has been liked!"
-                },
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "You have a new mention!"
-                }
-            };
-            return Ok(notifications);
+            return Ok(_notificationService.GetNotifications(userId, type, isRead));
         }
 
 
-        [HttpGet("notificationId:{notificationId}")]
-        public IActionResult GetNotification([FromRoute] Guid notificationId)
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(NotificationDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetNotificationById([FromRoute] Guid id)
         {
-            var notification = new
+            var notification = _notificationService.GetNotificationById(id);
+
+            if (notification == null)
             {
-                notificationId = notificationId,
-                message = "This is a sample notification."
-            };
+                return NotFound();
+            }
+
+            return Ok(notification);
+
+        }
+
+
+        [HttpPost]
+        [ProducesResponseType(typeof(NotificationDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult CreateNotification([FromBody] CreateNotificationDto createNotificationDto)
+        {
+            var createdNotification = _notificationService.CreateNotification(createNotificationDto);
+
+            if (createdNotification == null)
+            {    // The type is already validated by [ApiController], so the only failure left is an unknown user.
+                return BadRequest("The user, or the user who triggered the notification, does not exist.");
+            }
+
+            return CreatedAtAction(nameof(GetNotificationById), new { id = createdNotification.Id }, createdNotification);
+        }
+
+
+        // PATCH /api/notifications/{id}/read
+        [HttpPatch("{id}/read")]
+        [ProducesResponseType(typeof(NotificationDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public IActionResult MarkNotificationAsRead([FromRoute] Guid id)
+        {
+            var notification = _notificationService.MarkNotificationAsRead(id);
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+
             return Ok(notification);
         }
 
-
-        [HttpGet("userId:{userId}")]
-        public IActionResult GetNotificationsByUserId([FromRoute] Guid userId)
+        // PATCH /api/notifications/read-all?userId={userId}
+        [HttpPatch("read-all")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult MarkAllNotificationsAsRead([FromQuery] Guid userId)
         {
-            var notifications = new List<object>
-            {
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "You have a new follower!"
-                },
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "Your tweet has been liked!"
-                },
-                new
-                {
-                    notificationId = Guid.NewGuid(),
-                    message = "You have a new mention!"
-                }
-            };
-            return Ok(notifications);
+            var updatedCount = _notificationService.MarkAllNotificationsAsRead(userId);
+
+            return Ok(new { UserId = userId, UpdatedCount = updatedCount });
         }
 
-        [HttpPut("notificationId:{notificationId}")]
-        public IActionResult UpdateNotification([FromRoute] Guid notificationId, [FromBody] string message)
-        {
-            var notification = new
-            {
-                notificationId = notificationId,
-                message = message
-            };  
-            return Ok(notification);
-        }
 
-        [HttpDelete("notificationId:{notificationId}")]
-        public IActionResult DeleteNotification([FromRoute] Guid notificationId)
+
+
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteNotification([FromRoute] Guid id)
         {
-            var notification = new
+
+            var isDeleted = _notificationService.DeleteNotification(id);
+
+            if (isDeleted == false)
             {
-                notificationId = notificationId,
-                message = "This notification has been deleted."
-            };
-            return Ok(notification.message);
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }

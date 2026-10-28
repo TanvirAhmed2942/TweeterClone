@@ -1,28 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
-    internal class MessageContent
+    public class MessageContent
     {
-        private string _text;
-        private string _imageUrl;
+        public string Text { get; }
+        public string ImageUrl { get; }
 
         public MessageContent(string text, string imageUrl)
         {
-            _text = text;
-            _imageUrl = imageUrl;
+            Text = text?.Trim() ?? string.Empty;
+            ImageUrl = imageUrl?.Trim() ?? string.Empty;
         }
 
-        public string Text
-        {
-            get { return _text; }
-        }
-
-        public string ImageUrl
-        {
-            get { return _imageUrl; }
-        }
+        public bool IsEmpty =>
+            string.IsNullOrWhiteSpace(Text) &&
+            string.IsNullOrWhiteSpace(ImageUrl);
     }
 }

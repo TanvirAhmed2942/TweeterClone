@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.DTOs;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -9,59 +10,101 @@ namespace TwitterClone.Api.Controllers
     [Authorize]
     public class MassagesController : ControllerBase
     {
-        
+        private readonly IMessageService _messageService;
+
+        public MassagesController(
+            IMessageService messageService)
+        {
+            _messageService = messageService;
+        }
+
 
         [HttpGet]
-       
-        public IActionResult GetMassages()
+        [ProducesResponseType(typeof(List<MessageDto>), StatusCodes.Status200OK)]
+        public IActionResult GetMessages([FromQuery] Guid? senderId, [FromQuery] Guid? receiverId)
         {
-            var massages = new[]
-            {
-                new { MassageId = Guid.NewGuid(), Content = "Hello, how are you?" },
-                new { MassageId = Guid.NewGuid(), Content = "Don't forget our meeting tomorrow." },
-                new { MassageId = Guid.NewGuid(), Content = "Happy Birthday!" }
-            };
-            return Ok(massages);
+            return Ok(_messageService.GetMessages(senderId, receiverId));
         }
 
-        [HttpGet("massageId:{massageId}")]
-        public IActionResult GetMassage([FromRoute] Guid massageId)
+        [HttpGet("{massageId}")]
+        [ProducesResponseType(typeof(MessageDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetMessageById([FromRoute] Guid massageId)
         {
-            var massage = new { MassageId = massageId, Content = "This is a sample massage." };
-            return Ok(massage);
+            var message = _messageService.GetMessageById(massageId);
+
+            if (message == null)
+            {
+                return NotFound();
+            }
+            return Ok(message);
         }
 
-        [HttpGet("userId:{userId}")]
-        public IActionResult GetMassagesByUserId([FromRoute] Guid userId)
+
+        [HttpGet("conversation")]
+        [ProducesResponseType(typeof(List<MessageDto>), StatusCodes.Status200OK)]
+        public IActionResult GetConversation([FromQuery] Guid userId, [FromQuery] Guid otherUserId)
         {
-            var massages = new[]
-            {
-                new { MassageId = Guid.NewGuid(), Content = "Hello, how are you?" },
-                new { MassageId = Guid.NewGuid(), Content = "Don't forget our meeting tomorrow." },
-                new { MassageId = Guid.NewGuid(), Content = "Happy Birthday!" }
-            };
-            return Ok(massages);
+            return Ok(_messageService.GetConversation(userId, otherUserId));
         }
 
         [HttpPost]
-        public IActionResult SendMassage([FromBody] string massage)
+        [ProducesResponseType(typeof(MessageDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult SendMessage([FromBody] CreateMessageDto createMessageDto)
         {
 
-            return Ok(new { Message = "Massage sent successfully!", Content = massage });
+            var sentMessage = _messageService.SendMessage(createMessageDto);
+
+            if (sentMessage == null)
+            {
+                return BadRequest("Both users must exist, and a user cannot message themselves.");
+            }
+            return CreatedAtAction(nameof(GetMessageById), new { id = sentMessage.Id }, sentMessage);
         }
 
         [HttpPut("massageId:{massageId}")]
-        public IActionResult UpdateMassage([FromRoute] Guid massageId, [FromBody] string content)
+        [ProducesResponseType(typeof(MessageDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult UpdateMessage([FromRoute] Guid massageId, [FromBody] UpdateMessageDto updateMessageDto)
         {
-            var massage = new { MassageId = massageId, Content = content };
-            return Ok(massage);
+
+            var message = _messageService.UpdateMessage(massageId, updateMessageDto);
+
+            if (message == null)
+            {
+                return NotFound();
+            }
+            return Ok(message);
+        }
+
+        [HttpPatch("{massageId}/read")]
+        [ProducesResponseType(typeof(MessageDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult MarkMessageAsRead([FromRoute] Guid massageId)
+        {
+            var message = _messageService.MarkMessageAsRead(massageId);
+
+            if (message == null)
+            {
+                return NotFound();
+            }
+            return Ok(message);
         }
 
         [HttpDelete("massageId:{massageId}")]
-        public IActionResult DeleteMassage([FromRoute] Guid massageId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteMessage([FromRoute] Guid massageId)
         {
-            var massage = new { MassageId = massageId, Content = "This massage has been deleted." };
-            return Ok(massage);
+            var isDeleted = _messageService.DeleteMessage(massageId);
+
+            if (isDeleted == false)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }
