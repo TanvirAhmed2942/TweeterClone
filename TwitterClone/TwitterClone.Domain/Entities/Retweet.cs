@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TwitterClone.Domain.Entities
+﻿namespace TwitterClone.Domain.Entities
 {
-    internal class Retweet : BaseEntity
+    public class Retweet : BaseEntity
     {
         private Guid _userId;
         private Guid _tweetId;

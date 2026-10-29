@@ -6,7 +6,7 @@ namespace TwitterClone.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User>? _users = [];
+        private readonly List<User> _users = [];
 
         public User CreateUser(CreateUserDto user)
         {
@@ -35,13 +35,13 @@ namespace TwitterClone.Infrastructure.Repositories
 
         public User? FetchUserById(Guid userId)
         {
-            return _users?.SingleOrDefault(u => u.Id == userId);
+            return _users.SingleOrDefault(u => u.Id == userId);
         }
 
 
-        public bool IsFoundById(Guid userId)
+        public User? IsFoundById(Guid userId)
         {
-            return _users?.Any(u => u.Id == userId) ?? false;
+            return _users.SingleOrDefault(u => u.Id == userId);
         }
 
         public bool IsEmailExists(string email)

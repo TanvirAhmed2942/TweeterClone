@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TwitterClone.Application.Interfaces;
 
 namespace TwitterClone.Api.Controllers
 {
@@ -7,6 +7,13 @@ namespace TwitterClone.Api.Controllers
     [ApiController]
     public class FollowsController : ControllerBase
     {
+        private readonly IFollowService _followService;
+
+        public FollowsController(
+            IFollowService followService)
+        {
+            _followService = followService;
+        }
         [HttpGet]
         public IActionResult GetFollows()
         {
