@@ -6,7 +6,7 @@
         public string _firstName { get; private set; }
         public string _lastName { get; private set; }
         public string _email { get; private set; }
-        public string _password { get; private set; }
+        public string _passwordHash { get; private set; }
         public string _gender { get; private set; }
         public string _phone { get; private set; }
 
@@ -18,7 +18,7 @@
             _firstName = firstName;
             _lastName = lastName;
             _email = email;
-            _password = password;
+            _passwordHash = password;
             _gender = gender;
             _phone = phone;
         }
@@ -43,10 +43,10 @@
             set { _email = value; }
         }
 
-        public string Password
+        public string PasswordHash
         {
-            get { return _password; }
-            set { _password = value; }
+            get { return _passwordHash; }
+            set { _passwordHash = value; }
         }
 
         public string Gender
@@ -70,14 +70,14 @@
         {
             _firstName = firstName;
             _lastName = lastName;
-            _password = password;
+            _passwordHash = password;
             _gender = gender;
             _phone = phone;
         }
         public override string DescribeRecord()
         {
             var baseRecord = base.DescribeRecord();
-            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Password: {Password}, Gender: {Gender}, Phone: {Phone}, Followers: {_followers.Count}, Notifications: {_notifications.Count}";
+            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Password: {_passwordHash}, Gender: {Gender}, Phone: {Phone}, Followers: {_followers.Count}, Notifications: {_notifications.Count}";
         }
 
         public void Follow(Guid userId)
