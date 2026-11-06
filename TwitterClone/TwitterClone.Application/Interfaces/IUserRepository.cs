@@ -8,6 +8,7 @@ namespace TwitterClone.Application.Interfaces
         User CreateUser(CreateUserDto user);
         List<User> FetchAllUsers();
         User? FetchUserById(Guid userId);
+        User? FetchUserByEmail(string email);
 
         User? IsFoundById(Guid userId);
 

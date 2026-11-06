@@ -10,6 +10,7 @@ namespace TwitterClone.Api.Controllers
     //[Authorize]
     public class NotificationsController : ControllerBase
     {
+
         private readonly INotificationService _notificationService;
 
         public NotificationsController(
@@ -19,6 +20,7 @@ namespace TwitterClone.Api.Controllers
         }
         [HttpGet]
         [ProducesResponseType(typeof(List<NotificationDto>), StatusCodes.Status200OK)]
+
         public IActionResult GetNotifications([FromQuery] Guid? userId, [FromQuery] NotificationType? type, [FromQuery] bool? isRead)
         {
             return Ok(_notificationService.GetNotifications(userId, type, isRead));

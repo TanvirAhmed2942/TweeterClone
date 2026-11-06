@@ -38,6 +38,11 @@ namespace TwitterClone.Infrastructure.Repositories
             return _users.SingleOrDefault(u => u.Id == userId);
         }
 
+        public User? FetchUserByEmail(string email)
+        {
+            return _users.SingleOrDefault(u => u.Email == email);
+        }
+
 
         public User? IsFoundById(Guid userId)
         {
@@ -66,7 +71,7 @@ namespace TwitterClone.Infrastructure.Repositories
 
             existingUser.FirstName = updateUserDto?.FirstName ?? existingUser.FirstName;
             existingUser.LastName = updateUserDto?.LastName ?? existingUser.LastName;
-            existingUser.Password = updateUserDto?.Password ?? existingUser.Password;
+            existingUser.PasswordHash = updateUserDto?.Password ?? existingUser.PasswordHash;
             existingUser.Gender = updateUserDto?.Gender ?? existingUser.Gender;
             existingUser.Phone = updateUserDto?.Phone ?? existingUser.Phone;
 
@@ -89,7 +94,7 @@ namespace TwitterClone.Infrastructure.Repositories
                 existingUser.LastName = dto.LastName;
 
             if (dto.Password != null)
-                existingUser.Password = dto.Password;
+                existingUser.PasswordHash = dto.Password;
 
             if (dto.Gender != null)
                 existingUser.Gender = dto.Gender;

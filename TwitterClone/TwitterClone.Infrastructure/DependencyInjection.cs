@@ -20,6 +20,7 @@ namespace TwitterClone.Infrastructure
             services.AddSingleton<INotificationRepository, NotificationRepository>();
             services.AddSingleton<IRetweetRepository, RetweetRepository>();
 
+
             return services;
         }
     }

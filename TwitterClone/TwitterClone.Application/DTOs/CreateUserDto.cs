@@ -1,11 +1,15 @@
-﻿namespace TwitterClone.Application.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TwitterClone.Application.DTOs
 {
     public class CreateUserDto
     {
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
+        [EmailAddress]
         public string Email { get; set; } = "";
-        public string Password { get; set; } = "";
+
+        public required string Password { get; set; } = "";
         public string Gender { get; set; } = "";
         public string Phone { get; set; } = "";
     }
