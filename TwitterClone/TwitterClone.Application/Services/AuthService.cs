@@ -25,7 +25,7 @@ namespace TwitterClone.Application.Services
                 return null;
             }
 
-            var userAuthorized = _passwordHasher.VerifyPassword(loginDto.Password, user.PasswordHash);
+            var userAuthorized = _passwordHasher.VerifyPassword(user.ToDto(), loginDto.Password, user.PasswordHash);
             if (userAuthorized)
             {
                 var (token, expiry) = _tokenService.GetToken(user.ToDto());

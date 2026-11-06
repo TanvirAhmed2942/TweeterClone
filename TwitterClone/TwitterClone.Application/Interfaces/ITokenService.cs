@@ -4,6 +4,6 @@ namespace TwitterClone.Application.Interfaces
 {
     public interface ITokenService
     {
-        (string, DateOnly) GetToken(ResponseUserDto? user);
+        (string, DateTime) GetToken(ResponseUserDto? user);
     }
 }

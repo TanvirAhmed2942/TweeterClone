@@ -24,6 +24,22 @@ namespace TwitterClone.Application.Mappings
             };
         }
 
+
+        public static ResponseUserDto? ToDto(this CreateUserDto? user)
+        {
+            if (user == null)
+                return null;
+
+            return new ResponseUserDto
+            {
+                Id = Guid.NewGuid(),
+                FirstName = user.FirstName ?? "",
+                LastName = user.LastName ?? "",
+                Name = $"{user.FirstName ?? ""} {user.LastName ?? ""}".Trim(),
+                Email = user.Email,
+            };
+        }
+
         //public static TweetDto ToDto(this Tweet tweet)
         //{
         //    return new TweetDto
