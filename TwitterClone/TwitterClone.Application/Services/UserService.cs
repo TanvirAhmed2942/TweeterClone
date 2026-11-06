@@ -1,5 +1,6 @@
 ﻿using TwitterClone.Application.DTOs;
 using TwitterClone.Application.Interfaces;
+using TwitterClone.Application.Mappings;
 
 
 namespace TwitterClone.Application.Services
@@ -7,9 +8,13 @@ namespace TwitterClone.Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IPasswordHasher _passwordHasher;
+
+
+        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
 
         public ResponseUserDto? CreateUser(CreateUserDto createUserDto)
@@ -37,12 +42,13 @@ namespace TwitterClone.Application.Services
                 FirstName = createUserDto.FirstName,
                 LastName = createUserDto.LastName,
                 Email = createUserDto.Email,
-                Password = createUserDto.Password,
+
                 Gender = createUserDto.Gender,
-                Phone = createUserDto.Phone
+                Phone = createUserDto.Phone,
+                Password = _passwordHasher.Hash(createUserDto.ToDto(), createUserDto.Password)
             };
 
-            var userCreated = _userRepository.CreateUser(createUserDto);
+            var userCreated = _userRepository.CreateUser(newUser);
             if (userCreated == null)
             {
                 return null;

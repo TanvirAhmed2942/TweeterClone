@@ -1,7 +1,11 @@
-﻿namespace TwitterClone.Application.Interfaces
+﻿using TwitterClone.Application.DTOs;
+
+namespace TwitterClone.Application.Interfaces
 {
     public interface IPasswordHasher
     {
-        bool VerifyPassword(string password, string passwordHash);
+        bool VerifyPassword(ResponseUserDto? userDto, string password, string passwordHash);
+
+        string Hash(ResponseUserDto? userDto, string password);
     }
 }
