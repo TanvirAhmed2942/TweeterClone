@@ -1,12 +1,19 @@
 ﻿using TwitterClone.Application.DTOs;
 using TwitterClone.Application.Interfaces;
 using TwitterClone.Domain.Entities;
+using TwitterClone.Infrastructure.Persistence;
 
 namespace TwitterClone.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users = [];
+        private readonly TwitterCloneDbContext _dbContext;
+
+
+        public UserRepository(TwitterCloneDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public User CreateUser(CreateUserDto user)
         {
@@ -19,44 +26,40 @@ namespace TwitterClone.Infrastructure.Repositories
                 user.Gender,
                 user.Phone
             );
-            _users?.Add(newUser);
-            Console.WriteLine($"Users count after create: {_users?.Count}");
+            _dbContext.Users.Add(newUser);
+            _dbContext.SaveChanges();
             return newUser;
         }
 
         public List<User> FetchAllUsers()
         {
-            if (_users == null || _users.Count == 0)
-            {
-                return [];
-            }
-            return [.. _users];
+            return _dbContext.Users.ToList();
         }
 
         public User? FetchUserById(Guid userId)
         {
-            return _users.SingleOrDefault(u => u.Id == userId);
+            return _dbContext.Users.SingleOrDefault(u => u.Id == userId);
         }
 
         public User? FetchUserByEmail(string email)
         {
-            return _users.SingleOrDefault(u => u.Email == email);
+            return _dbContext.Users.SingleOrDefault(u => u.Email == email);
         }
 
 
         public User? IsFoundById(Guid userId)
         {
-            return _users.SingleOrDefault(u => u.Id == userId);
+            return _dbContext.Users.SingleOrDefault(u => u.Id == userId);
         }
 
         public bool IsEmailExists(string email)
         {
-            return _users?.Any(u => u.Email == email) ?? false;
+            return _dbContext.Users.Any(u => u.Email == email);
         }
 
         public User? ModifyUser(Guid userId, UpdateUserDto updateUserDto)
         {
-            var existingUser = _users?.SingleOrDefault(u => u.Id == userId);
+            var existingUser = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
 
             if (existingUser == null)
                 return null;
@@ -82,7 +85,7 @@ namespace TwitterClone.Infrastructure.Repositories
 
         public User? PatchUser(Guid userId, PatchUpdateUserDto dto)
         {
-            var existingUser = _users?.SingleOrDefault(u => u.Id == userId);
+            var existingUser = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
 
             if (existingUser == null)
                 return null;
@@ -108,10 +111,11 @@ namespace TwitterClone.Infrastructure.Repositories
 
         public bool DeleteById(Guid userId)
         {
-            var user = _users?.SingleOrDefault(u => u.Id == userId);
+            var user = _dbContext.Users.SingleOrDefault(u => u.Id == userId);
             if (user == null)
                 return false;
-            _users?.Remove(user);
+            _dbContext.Users.Remove(user);
+            _dbContext.SaveChanges();
             return true;
         }
     }
