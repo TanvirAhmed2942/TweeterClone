@@ -1,19 +1,70 @@
-﻿namespace TwitterClone.Domain.Entities
+﻿
+namespace TwitterClone.Domain.Entities
 {
     public class User : BaseEntity, IFollowable, INotifiable
     {
+        // Private backing fields
+        private string _firstName = string.Empty;
+        private string _lastName = string.Empty;
+        private string _email = string.Empty;
+        private string _passwordHash = string.Empty;
+        private string _gender = string.Empty;
+        private string _phone = string.Empty;
 
-        public string _firstName { get; private set; }
-        public string _lastName { get; private set; }
-        public string _email { get; private set; }
-        public string _passwordHash { get; private set; }
-        public string _gender { get; private set; }
-        public string _phone { get; private set; }
+        private List<Guid> _followers = new();
+        private List<Guid> _notifications = new();
 
-        private List<Guid> _followers = new List<Guid>();
-        private List<Guid> _notifications = new List<Guid>();
+        // Properties
+        public string FirstName
+        {
+            get => _firstName;
+            set => _firstName = value;
+        }
 
-        public User(string firstName, string lastName, string email, string password, string gender, string phone) : base(Guid.NewGuid())
+        public string LastName
+        {
+            get => _lastName;
+            set => _lastName = value;
+        }
+
+        public string Email
+        {
+            get => _email;
+            set => _email = value;
+        }
+
+        public string PasswordHash
+        {
+            get => _passwordHash;
+            set => _passwordHash = value;
+        }
+
+        public string Gender
+        {
+            get => _gender;
+            set => _gender = value;
+        }
+
+        public string Phone
+        {
+            get => _phone;
+            set => _phone = value;
+        }
+
+        // EF Core constructor
+        private User() : base(Guid.Empty)
+        {
+        }
+
+        // Application constructor
+        public User(
+            string firstName,
+            string lastName,
+            string email,
+            string password,
+            string gender,
+            string phone
+        ) : base(Guid.NewGuid())
         {
             _firstName = firstName;
             _lastName = lastName;
@@ -21,44 +72,6 @@
             _passwordHash = password;
             _gender = gender;
             _phone = phone;
-        }
-
-
-
-        public string FirstName
-        {
-            get { return _firstName; }
-            set { _firstName = value; }
-        }
-
-        public string LastName
-        {
-            get { return _lastName; }
-            set { _lastName = value; }
-        }
-
-        public string Email
-        {
-            get { return _email; }
-            set { _email = value; }
-        }
-
-        public string PasswordHash
-        {
-            get { return _passwordHash; }
-            set { _passwordHash = value; }
-        }
-
-        public string Gender
-        {
-            get { return _gender; }
-            set { _gender = value; }
-        }
-
-        public string Phone
-        {
-            get { return _phone; }
-            set { _phone = value; }
         }
 
         public void Update(
@@ -74,10 +87,12 @@
             _gender = gender;
             _phone = phone;
         }
+
         public override string DescribeRecord()
         {
             var baseRecord = base.DescribeRecord();
-            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Password: {_passwordHash}, Gender: {Gender}, Phone: {Phone}, Followers: {_followers.Count}, Notifications: {_notifications.Count}";
+
+            return $"{baseRecord}, First Name: {FirstName}, Last Name: {LastName}, Email: {Email}, Gender: {Gender}, Phone: {Phone}, Followers: {_followers.Count}, Notifications: {_notifications.Count}";
         }
 
         public void Follow(Guid userId)

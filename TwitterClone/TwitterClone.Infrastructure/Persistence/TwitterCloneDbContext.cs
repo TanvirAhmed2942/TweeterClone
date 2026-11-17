@@ -25,6 +25,13 @@ namespace TwitterClone.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<LikeNotification>();
+            modelBuilder.Entity<CommentNotification>();
+            modelBuilder.Entity<FriendRequestNotification>();
+            modelBuilder.Entity<SystemNotification>();
+            modelBuilder.Entity<MentionNotification>();
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(TwitterCloneDbContext).Assembly);
         }
     }

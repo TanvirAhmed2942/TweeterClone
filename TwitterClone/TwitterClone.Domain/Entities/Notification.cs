@@ -1,45 +1,42 @@
-﻿namespace TwitterClone.Domain.Entities
+﻿using TwitterClone.Domain.Entities;
+
+public abstract class Notification : BaseEntity
 {
-    public abstract class Notification : BaseEntity
+    public Guid UserId { get; set; }
+    public NotificationType Type { get; private set; } = NotificationType.Like;
+    public string Message { get; private set; } = "";
+    public bool IsRead { get; set; } = false;
+
+    protected Notification(NotificationType type) : base(Guid.NewGuid())
     {
-
-        public Guid UserId { get; set; }
-        public NotificationType Type { get; private set; } = NotificationType.Like;
-        public string Message { get; private set; } = "";
-        public bool IsRead { get; set; } = false;
-
-
-        public Notification(NotificationType type) : base(Guid.NewGuid())
-        {
-            Type = type;
-        }
-
-        protected void SetMessage(string message, bool isRead)
-        {
-            Message = message;
-            IsRead = isRead;
-        }
-
-
-        public abstract string GetMessage();
-
-        public override string DescribeRecord()
-        {
-            var baseRecord = base.DescribeRecord();
-            return $"{baseRecord}, UserId: {UserId}, Type: {Type}, Message: {Message}, IsRead: {IsRead}";
-        }
-
+        Type = type;
     }
 
-    public enum NotificationType
+    protected void SetMessage(string message, bool isRead)
     {
-        Like,
-        Comment,
-        Retweet,
-        Follow,
-        Message,
-        FriendRequest,
-        Mention,
-        System
+        Message = message;
+        IsRead = isRead;
+    }
+
+    public abstract string GetMessage();
+
+    public override string DescribeRecord()
+    {
+        var baseRecord = base.DescribeRecord();
+        return $"{baseRecord}, UserId: {UserId}, Type: {Type}, Message: {Message}, IsRead: {IsRead}";
     }
 }
+
+
+public enum NotificationType
+{
+    Like,
+    Comment,
+    Retweet,
+    Follow,
+    Message,
+    FriendRequest,
+    Mention,
+    System
+}
+
