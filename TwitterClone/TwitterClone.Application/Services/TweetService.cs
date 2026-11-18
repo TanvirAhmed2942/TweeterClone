@@ -14,7 +14,9 @@ namespace TwitterClone.Application.Services
 
         public Tweet? AddTweet(CreateTweetDto createTweetDto)
         {
-            if (createTweetDto == null || string.IsNullOrWhiteSpace(createTweetDto.Content))
+            if (createTweetDto == null
+    || string.IsNullOrWhiteSpace(createTweetDto.Content)
+    || createTweetDto.Content.Length > Tweet.MaxContentLength)
             {
                 return null;
             }
