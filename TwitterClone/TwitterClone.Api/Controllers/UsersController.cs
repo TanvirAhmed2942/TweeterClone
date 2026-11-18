@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TwitterClone.Api.CustomAttributes;
 using TwitterClone.Application.DTOs;
 using TwitterClone.Application.Interfaces;
 
@@ -41,7 +40,7 @@ namespace TwitterClone.Api.Controllers
         }
 
         [HttpPost]
-        [UserInfoValidator]
+
         public IActionResult CreateUser([FromBody] CreateUserDto createUserDto)
         {
 
