@@ -1,39 +1,48 @@
 ﻿using TwitterClone.Application.Interfaces;
 using TwitterClone.Domain.Entities;
+using TwitterClone.Infrastructure.Persistence;
 
 namespace TwitterClone.Infrastructure.Repositories
 {
     public class NotificationRepository : INotificationRepository
     {
-        private readonly List<Notification> _notifications = new List<Notification>();
+        private readonly TwitterCloneDbContext _dbContext;
+
+        public NotificationRepository(TwitterCloneDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public Notification AddNotification(Notification notification)
         {
-            _notifications.Add(notification);
+            _dbContext.Notifications.Add(notification);
 
             return notification;
         }
 
         public Notification UpdateNotification(Notification notification)
         {
-            _notifications.RemoveAll(n => n.Id == notification.Id);
-            _notifications.Add(notification);
+            _dbContext.Notifications.Remove(notification);
+            _dbContext.Notifications.Add(notification);
             return notification;
         }
 
         public bool DeleteNotification(Notification notification)
         {
-            return _notifications.Remove(notification);
+            _dbContext.Notifications.Remove(notification);
+            return true;
         }
 
         public int DeleteNotificationsByUserId(Guid userId)
         {
-            return _notifications.RemoveAll(n => n.UserId == userId);
+            var notifications = _dbContext.Notifications.Where(n => n.UserId == userId);
+            _dbContext.Notifications.RemoveRange(notifications);
+            return notifications.Count();
         }
 
         public Notification? GetNotificationById(Guid id)
         {
-            return _notifications.SingleOrDefault(n => n.Id == id);
+            return _dbContext.Notifications.SingleOrDefault(n => n.Id == id);
         }
 
         public List<Notification> GetNotifications(
@@ -41,7 +50,7 @@ namespace TwitterClone.Infrastructure.Repositories
     NotificationType? type,
     bool? isRead)
         {
-            return _notifications
+            return _dbContext.Notifications
                 .Where(n =>
                     (userId == null || n.UserId == userId) &&
                     (type == null || n.Type == type) &&

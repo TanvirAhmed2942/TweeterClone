@@ -1,45 +1,50 @@
-﻿namespace TwitterClone.Domain.Entities
+﻿using TwitterClone.Domain.Entities;
+
+public class Message : BaseEntity
 {
-    public class Message : BaseEntity
+    public Guid SenderId { get; private set; }
+    public Guid ReceiverId { get; private set; }
+
+    public bool IsRead { get; set; } = false;
+    public bool IsDeleted { get; private set; } = false;
+
+    public DateTime SentAt { get; private set; }
+
+    public MessageContent Content { get; private set; } = null!;
+
+    // EF Core
+    private Message() : base(Guid.Empty)
     {
-        public Guid SenderId { get; private set; }
-        public Guid ReceiverId { get; private set; }
+    }
 
-        public bool IsRead { get; set; } = false;
-        public bool IsDeleted { get; private set; } = false;
+    // Application
+    public Message(
+        Guid senderId,
+        Guid receiverId,
+        MessageContent content,
+        DateTime sentAt,
+        bool isRead
+    ) : base(Guid.NewGuid())
+    {
+        ArgumentNullException.ThrowIfNull(content);
 
-        public DateTime SentAt { get; private set; }
+        SenderId = senderId;
+        ReceiverId = receiverId;
+        Content = content;
+        SentAt = sentAt;
+        IsRead = isRead;
+    }
 
-        public MessageContent Content { get; private set; }
+    public void UpdateContent(MessageContent content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        Content = content;
+    }
 
-        public Message(
-            Guid senderId,
-            Guid receiverId,
-            MessageContent content,
-            DateTime sentAt,
-            bool isRead
-        ) : base(Guid.NewGuid())
-        {
-            SenderId = senderId;
-            ReceiverId = receiverId;
-            Content = content;
-            SentAt = sentAt;
-            IsRead = isRead;
-        }
-        public void UpdateContent(MessageContent content)
-        {
-            ArgumentNullException.ThrowIfNull(content);
+    public override string DescribeRecord()
+    {
+        var baseRecord = base.DescribeRecord();
 
-            Content = content;
-        }
-
-
-
-        public override string DescribeRecord()
-        {
-            var baseRecord = base.DescribeRecord();
-
-            return $"{baseRecord}, Message ID: {Id}, Sender ID: {SenderId}, Receiver ID: {ReceiverId}, Content: {Content.Text}, IsRead: {IsRead}, IsDeleted: {IsDeleted}";
-        }
+        return $"{baseRecord}, Message ID: {Id}, Sender ID: {SenderId}, Receiver ID: {ReceiverId}, Content: {Content.Text}, IsRead: {IsRead}, IsDeleted: {IsDeleted}";
     }
 }
