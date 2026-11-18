@@ -60,7 +60,7 @@ if (app.Configuration.GetSection("Database").GetValue<bool>("ApplyMigrationsOnSt
 {
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<TwitterCloneDbContext>();
-    dbContext.Database.EnsureCreated();
+    //dbContext.Database.EnsureCreated();
     await dbContext.Database.MigrateAsync();
 }
 
