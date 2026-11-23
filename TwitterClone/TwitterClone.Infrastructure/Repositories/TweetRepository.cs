@@ -16,11 +16,16 @@ namespace TwitterClone.Infrastructure.Repositories
         public Tweet AddTweet(Tweet tweet)
         {
             _dbContext.Tweets.Add(tweet);
+            _dbContext.SaveChanges();
             return tweet;
         }
 
         public List<Tweet> GetAllTweets()
         {
+            if (_dbContext.Tweets == null || !_dbContext.Tweets.Any())
+            {
+                return new List<Tweet>();
+            }
             return _dbContext.Tweets.ToList();
         }
 
@@ -50,6 +55,8 @@ namespace TwitterClone.Infrastructure.Repositories
 
             tweet?.Content = content;
 
+            _dbContext.SaveChanges();
+
 
             return tweet;
         }
@@ -62,6 +69,7 @@ namespace TwitterClone.Infrastructure.Repositories
                 return null;
 
             _dbContext.Tweets.Remove(tweet);
+            _dbContext.SaveChanges();
 
             return tweet;
         }

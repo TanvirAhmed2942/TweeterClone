@@ -268,7 +268,9 @@ namespace TwitterClone.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tweets");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("tweets", (string)null);
                 });
 
             modelBuilder.Entity("TwitterClone.Domain.Entities.User", b =>
@@ -419,6 +421,17 @@ namespace TwitterClone.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Content")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TwitterClone.Domain.Entities.Tweet", b =>
+                {
+                    b.HasOne("TwitterClone.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
