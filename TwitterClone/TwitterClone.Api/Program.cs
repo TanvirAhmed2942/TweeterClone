@@ -1,15 +1,17 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TwitterClone.Application;
 using TwitterClone.Infrastructure;
 using TwitterClone.Infrastructure.Auth;
+using TwitterClone.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 
@@ -52,6 +54,14 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/openapi/v1.json", "Twitter Clone API v1");
     });
+}
+
+if (app.Configuration.GetSection("Database").GetValue<bool>("ApplyMigrationsOnStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<TwitterCloneDbContext>();
+    //dbContext.Database.EnsureCreated();
+    await dbContext.Database.MigrateAsync();
 }
 
 app.UseHttpsRedirection();

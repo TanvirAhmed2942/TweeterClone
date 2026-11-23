@@ -2,8 +2,10 @@
 {
     public class MessageContent
     {
-        public string Text { get; }
-        public string ImageUrl { get; }
+        public string Text { get; private set; } = string.Empty;
+        public string ImageUrl { get; private set; } = string.Empty;
+
+        private MessageContent() { }
 
         public MessageContent(string text, string imageUrl)
         {

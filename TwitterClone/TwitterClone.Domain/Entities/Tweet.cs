@@ -3,34 +3,37 @@
     public class Tweet : BaseEntity, ILikeable, IShareable, ICommentable
     {
         public const int MaxContentLength = 280;
-        private Guid _userId { get; set; }
-        private string _content { get; set; }
+
+        private Guid _userId;
+        private string _content = string.Empty;
 
         private List<Guid> _likes = new List<Guid>();
         private List<Guid> _shares = new List<Guid>();
-
         private List<Guid> _comments = new List<Guid>();
 
-
+        // Navigation property: nullable, EF fills it via .Include(t => t.User)
+        public User? User { get; set; }
 
         public Tweet(Guid userId, string content) : base(Guid.NewGuid())
         {
             _userId = userId;
             _content = content;
-
         }
+
+        // For EF Core
+        private Tweet() : base(Guid.NewGuid()) { }
+
         public Guid UserId
         {
             get { return _userId; }
             set { _userId = value; }
         }
+
         public string Content
         {
             get { return _content; }
             set { _content = value; }
         }
-
-
 
         public override string DescribeRecord()
         {
@@ -40,14 +43,8 @@
 
         public bool CanBeLiked()
         {
-            if (string.IsNullOrWhiteSpace(Content))
-            {
-                return false;
-            }
-            return true;
+            return !string.IsNullOrWhiteSpace(Content);
         }
-
-
 
         public bool CanBeCommented(Guid userId, string comment)
         {
@@ -68,7 +65,5 @@
             }
             return false;
         }
-
     }
-
 }
