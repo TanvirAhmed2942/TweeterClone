@@ -19,5 +19,8 @@ namespace TwitterClone.Application.Interfaces
         User? PatchUser(Guid userId, PatchUpdateUserDto dto);
 
         bool DeleteById(Guid userId);
+
+        void AddUserRole(UserRole userRole);
+        void RemoveUserRole(UserRole userRole);
     }
 }

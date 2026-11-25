@@ -18,6 +18,12 @@ namespace TwitterClone.Infrastructure.Persistence
         public DbSet<Message> Messages { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Retweet> Retweets { get; set; }
+
+
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RolePermissoin> RolePermissoins { get; set; }
         //public DbSet<Comment> Comments { get; set; }
 
 

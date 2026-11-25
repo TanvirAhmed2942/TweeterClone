@@ -14,6 +14,8 @@ namespace TwitterClone.Domain.Entities
         private List<Guid> _followers = new();
         private List<Guid> _notifications = new();
 
+        public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
+
         // Properties
         public string FirstName
         {

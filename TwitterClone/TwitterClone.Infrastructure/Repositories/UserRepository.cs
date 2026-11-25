@@ -118,5 +118,17 @@ namespace TwitterClone.Infrastructure.Repositories
             _dbContext.SaveChanges();
             return true;
         }
+
+        public void AddUserRole(UserRole userRole)
+        {
+            _dbContext.UserRoles.Add(userRole);
+            _dbContext.SaveChanges();
+        }
+
+        public void RemoveUserRole(UserRole userRole)
+        {
+            _dbContext.UserRoles.Remove(userRole);
+            _dbContext.SaveChanges();
+        }
     }
 }
